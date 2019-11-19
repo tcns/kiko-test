@@ -17,6 +17,7 @@ import ru.tcns.kiko.impl.timeSlot
 
 import test.kiko.ru.tcns.kiko.Configuration
 import test.kiko.ru.tcns.kiko.api.HttpException
+import test.kiko.ru.tcns.kiko.api.respond
 import test.kiko.ru.tcns.kiko.impl.DeletionWorker
 import test.kiko.ru.tcns.kiko.impl.NotificationWorker
 import test.kiko.ru.tcns.kiko.mock.DbMock
@@ -60,7 +61,7 @@ fun Application.module(dbMock: DbMock = DbMock()) {
 
         install(StatusPages) {
             exception<HttpException> { cause ->
-                call.respond(cause.code, cause.description)
+                respond(cause)
             }
         }
         timeSlot(dbMock, notificationMock)

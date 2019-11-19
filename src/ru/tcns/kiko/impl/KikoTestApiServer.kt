@@ -13,7 +13,6 @@ import ru.tcns.kiko.api.TimeSlot
 import ru.tcns.kiko.api.TimeSlotByTime
 import ru.tcns.kiko.api.TimeSlotRequest
 import ru.tcns.kiko.api.TimeSlotStatus
-import test.kiko.ru.tcns.kiko.api.HttpException
 import test.kiko.ru.tcns.kiko.api.checkRequest
 import test.kiko.ru.tcns.kiko.api.httpException
 import test.kiko.ru.tcns.kiko.api.respond
@@ -24,12 +23,7 @@ import test.kiko.ru.tcns.kiko.mock.*
 fun Route.timeSlot(dbMock: DbMock, notificationMock: NotificationMock) {
 
     get<TimeSlotRequest> { request ->
-        try {
-            handleGet(request, dbMock)
-        } catch (ex: HttpException) {
-            respond(ex)
-        }
-
+        handleGet(request, dbMock)
     }
 
     /**
@@ -39,11 +33,7 @@ fun Route.timeSlot(dbMock: DbMock, notificationMock: NotificationMock) {
      */
 
     get<TimeSlotByTime> { request ->
-        try {
-            handleGetByTime(request, dbMock)
-        } catch (ex: HttpException) {
-            respond(ex)
-        }
+        handleGetByTime(request, dbMock)
     }
 
     /**
@@ -52,11 +42,7 @@ fun Route.timeSlot(dbMock: DbMock, notificationMock: NotificationMock) {
      * @return returned timeslot
      */
     put<TimeSlotByTime> { request ->
-        try {
-            handlePut(request, dbMock, notificationMock)
-        } catch (ex: HttpException) {
-            respond(ex)
-        }
+        handlePut(request, dbMock, notificationMock)
     }
 
     /**
@@ -66,12 +52,7 @@ fun Route.timeSlot(dbMock: DbMock, notificationMock: NotificationMock) {
      */
 
     delete<TimeSlotByTime> { request ->
-        try {
-            handleDelete(request, dbMock, notificationMock)
-        } catch (ex: HttpException) {
-            respond(ex)
-        }
-
+        handleDelete(request, dbMock, notificationMock)
     }
 }
 
