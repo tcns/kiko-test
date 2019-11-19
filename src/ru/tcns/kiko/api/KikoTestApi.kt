@@ -15,8 +15,8 @@ import test.kiko.ru.tcns.kiko.mock.DURATION_MINUTES
  *
  * @param from from filtering date in unix second
  * @param to to filtering date in unix second
- * @param tenantIds filter by tenantids comma separated
- * @param freeOnly return only available timeslots. Ignored when tenantIds provided
+ * @param tenantIds filter by tenantids comma separated. Ignored when freeOnly provided
+ * @param freeOnly return only available timeslots.
  * @param page page of pagination response
  * @param pageSize page of pagination response
  *
