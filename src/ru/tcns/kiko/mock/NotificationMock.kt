@@ -8,4 +8,7 @@ class NotificationMock {
     fun notifyTenant(timeSlot: TimeSlot) {
         LOG.info("Notifying ${timeSlot.tenantId}")
     }
+    fun notifyLandlord(timeSlot: TimeSlot) {
+        LOG.info("Notifying landlord about ${timeSlot.tenantId}")
+    }
 }

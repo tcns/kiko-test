@@ -20,6 +20,7 @@ import test.kiko.ru.tcns.kiko.api.HttpException
 import test.kiko.ru.tcns.kiko.impl.DeletionWorker
 import test.kiko.ru.tcns.kiko.impl.NotificationWorker
 import test.kiko.ru.tcns.kiko.mock.DbMock
+import test.kiko.ru.tcns.kiko.mock.NotificationMock
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -35,9 +36,10 @@ fun Application.module(dbMock: DbMock = DbMock()) {
     )
     val nWorker = NotificationWorker()
     val dWorker = DeletionWorker()
+    val notificationMock = NotificationMock()
 
     environment.monitor.subscribe(ApplicationStarted) {
-        nWorker.schedule(dbMock, schedulerConfig)
+        nWorker.schedule(dbMock, schedulerConfig, notificationMock)
         dWorker.schedule(dbMock, schedulerConfig)
     }
     environment.monitor.subscribe(ApplicationStopped) {
@@ -61,7 +63,7 @@ fun Application.module(dbMock: DbMock = DbMock()) {
                 call.respond(cause.code, cause.description)
             }
         }
-        timeSlot(dbMock)
+        timeSlot(dbMock, notificationMock)
     }
 }
 

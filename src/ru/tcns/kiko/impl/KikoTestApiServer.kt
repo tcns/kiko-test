@@ -21,7 +21,7 @@ import test.kiko.ru.tcns.kiko.mock.*
 
 
 @KtorExperimentalLocationsAPI
-fun Route.timeSlot(dbMock: DbMock) {
+fun Route.timeSlot(dbMock: DbMock, notificationMock: NotificationMock) {
 
     get<TimeSlotRequest> { request ->
         try {
@@ -53,7 +53,7 @@ fun Route.timeSlot(dbMock: DbMock) {
      */
     put<TimeSlotByTime> { request ->
         try {
-            handlePut(request, dbMock)
+            handlePut(request, dbMock, notificationMock)
         } catch (ex: HttpException) {
             respond(ex)
         }
@@ -67,7 +67,7 @@ fun Route.timeSlot(dbMock: DbMock) {
 
     delete<TimeSlotByTime> { request ->
         try {
-            handleDelete(request, dbMock)
+            handleDelete(request, dbMock, notificationMock)
         } catch (ex: HttpException) {
             respond(ex)
         }
@@ -108,22 +108,23 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetByTime(
 @KtorExperimentalLocationsAPI
 private suspend fun PipelineContext<Unit, ApplicationCall>.handlePut(
     request: TimeSlotByTime,
-    dbMock: DbMock
+    dbMock: DbMock,
+    notificationMock: NotificationMock
 ) {
     val adjustedTimeSec = request.time.adjustTimeSlotSecs()
     checkRequest(request.time.adjustTimeSlot().inAvailableRange()) { INVALID_TIME_MESSAGE }
     val timeSlot = dbMock.findTimeSlot(adjustedTimeSec)
 
     if (request.tenantId == CURRENT_TENANT_ID && isTaken(timeSlot)) {
-        respond(
-            dbMock.createTimeSlot(
-                TimeSlot(
-                    date = adjustedTimeSec,
-                    status = TimeSlotStatus.ACCEPTED,
-                    tenantId = timeSlot!!.tenantId
-                )
+        val slot = dbMock.createTimeSlot(
+            TimeSlot(
+                date = adjustedTimeSec,
+                status = TimeSlotStatus.ACCEPTED,
+                tenantId = timeSlot!!.tenantId
             )
         )
+        notificationMock.notifyTenant(slot)
+        respond(slot)
         return
     }
 
@@ -137,7 +138,8 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handlePut(
 @KtorExperimentalLocationsAPI
 private suspend fun PipelineContext<Unit, ApplicationCall>.handleDelete(
     request: TimeSlotByTime,
-    dbMock: DbMock
+    dbMock: DbMock,
+    notificationMock: NotificationMock
 ) {
     val adjustedTimeSec = request.time.adjustTimeSlotSecs()
     checkRequest(request.time.adjustTimeSlot().inAvailableRange()) { INVALID_TIME_MESSAGE }
@@ -145,13 +147,18 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handleDelete(
     if (request.tenantId == CURRENT_TENANT_ID) {
         //block timeslot but save tenant id for further unblocking if it will be needed
         val tenantId = dbMock.findTimeSlot(adjustedTimeSec)?.tenantId
-        dbMock.createTimeSlot(
+
+
+        val slot = dbMock.createTimeSlot(
             TimeSlot(
                 date = adjustedTimeSec,
                 status = TimeSlotStatus.BLOCKED,
                 tenantId = tenantId
             )
         )
+        if (tenantId != null) {
+            notificationMock.notifyTenant(slot)
+        }
         respond()
         return
     }

@@ -19,8 +19,8 @@ class NotificationWorker : CoroutineScope {
         job.cancel()
     }
 
-    fun schedule(dbMock: DbMock, configuration: Configuration) = launch {
-        val notifier = NotificationMock()
+    fun schedule(dbMock: DbMock, configuration: Configuration,
+                 notifier: NotificationMock) = launch {
         while (true) {
             delay(configuration.schedulerCheckSec.toLong() * 1000)
             val tenants = dbMock.findTimeSlotBetween(
@@ -30,7 +30,7 @@ class NotificationWorker : CoroutineScope {
             if (tenants.isEmpty()) {
                 LOG.info("No tenants to notify")
             }
-            tenants.forEach { notifier.notifyTenant(it) }
+            tenants.forEach { notifier.notifyLandlord(it) }
 
         }
     }
