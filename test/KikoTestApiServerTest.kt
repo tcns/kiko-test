@@ -11,9 +11,6 @@ import ru.tcns.kiko.api.TimeSlotStatus
 import test.kiko.ru.tcns.kiko.api.Json
 import test.kiko.ru.tcns.kiko.mock.CURRENT_TENANT_ID
 import test.kiko.ru.tcns.kiko.mock.DbMock
-import test.kiko.ru.tcns.kiko.mock.adjustTimeSlotSecs
-import test.kiko.ru.tcns.kiko.mock.nextWeekStart
-import java.time.ZoneOffset
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,11 +18,6 @@ import kotlin.test.assertEquals
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 class RoutesTest {
-
-    private val slot1 = getSlot(0)
-    private val slot2 = getSlot(30)
-    private val slot3 = getSlot(60)
-    private val slot4 = getSlot(88)
     /**
      * @see KikoTestApiServer.getTimeslot
      */
@@ -200,39 +192,4 @@ class RoutesTest {
     private fun TestApplicationCall.getContent() =
         Json.parse(response.content!!, TimeSlot::class.java)
 
-    private fun addTestData(dbMock: DbMock) {
-        dbMock.createTimeSlot(
-            TimeSlot(
-                date = slot1,
-                status = TimeSlotStatus.RESERVED,
-                tenantId = "t1"
-            )
-        )
-        dbMock.createTimeSlot(
-            TimeSlot(
-                date = slot2,
-                status = TimeSlotStatus.RESERVED,
-                tenantId = "t2"
-            )
-        )
-
-        dbMock.createTimeSlot(
-            TimeSlot(
-                date = slot3,
-                status = TimeSlotStatus.RESERVED,
-                tenantId = "t3"
-            )
-        )
-
-        dbMock.createTimeSlot(
-            TimeSlot(
-                date = slot4,
-                status = TimeSlotStatus.RESERVED,
-                tenantId = "t4"
-            )
-        )
-    }
-
-    private fun getSlot(delay: Long) =
-        nextWeekStart().plusMinutes(delay).toEpochSecond(ZoneOffset.UTC).toInt().adjustTimeSlotSecs()
 }

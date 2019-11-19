@@ -14,17 +14,11 @@ const val CURRENT_TENANT_ID = "landlord"
 
 
 class DbMock {
-    fun findAllTimeSlots() = timeSlots.values
 
     @Synchronized
     fun createTimeSlot(timeSlot: TimeSlot): TimeSlot {
         timeSlots[timeSlot.date] = timeSlot
         return timeSlot
-    }
-
-    @Synchronized
-    fun reserveTimeSlot(date: Int, tenantId: String): TimeSlot {
-        return timeSlots.put(date, TimeSlot(tenantId = tenantId, date = date, status = TimeSlotStatus.RESERVED))!!
     }
 
     fun findTimeSlot(date: Int) = timeSlots[date]

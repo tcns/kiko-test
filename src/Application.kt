@@ -13,8 +13,8 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
+import ru.tcns.kiko.impl.timeSlot
 
-import ru.tcns.kiko.impl.timeslot
 import test.kiko.ru.tcns.kiko.Configuration
 import test.kiko.ru.tcns.kiko.api.HttpException
 import test.kiko.ru.tcns.kiko.impl.DeletionWorker
@@ -36,11 +36,11 @@ fun Application.module(dbMock: DbMock = DbMock()) {
     val nWorker = NotificationWorker()
     val dWorker = DeletionWorker()
 
-    environment.monitor.subscribe(ApplicationStarted){
+    environment.monitor.subscribe(ApplicationStarted) {
         nWorker.schedule(dbMock, schedulerConfig)
         dWorker.schedule(dbMock, schedulerConfig)
     }
-    environment.monitor.subscribe(ApplicationStopped){
+    environment.monitor.subscribe(ApplicationStopped) {
         nWorker.cancel()
         dWorker.cancel()
     }
@@ -61,7 +61,7 @@ fun Application.module(dbMock: DbMock = DbMock()) {
                 call.respond(cause.code, cause.description)
             }
         }
-        timeslot(dbMock)
+        timeSlot(dbMock)
     }
 }
 
