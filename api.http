@@ -1,0 +1,23 @@
+# Kiko test api
+# Kiko test api. Because of lack of authorization. Current tenant id will be landlord
+
+###
+
+# filter timeslots
+GET {{host}}/timeslot?from=0&to=-1&freeOnly=false&page=0&size=20
+
+###
+
+# get timeslot by identifier
+GET {{host}}/timeslot/{{param_id}}
+
+###
+
+# reserve timeslot by tenant
+PUT {{host}}/timeslot/{{param_id}}
+
+###
+
+# cancel reservation by tenant id
+DELETE {{host}}/timeslot/{{param_id}}
+
