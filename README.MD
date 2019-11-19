@@ -18,9 +18,9 @@ Api состоит из 4х методов, указанных в api.http<br/>
 <br /><br /><br />
 Нотификация сделана на корутинах и ее частота в application.conf. Также, по шедулеру удаляются старые резервации<br />
 
-###Запуск
+**Запуск<br/>
 ./gradlew clean build
 java -jar build/libs/kiko-test-0.0.1-all.jar
 
-###Тест
+**Тест<br/>
 ./gradlew clean test
